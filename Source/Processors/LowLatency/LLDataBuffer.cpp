@@ -43,7 +43,7 @@ float* LLDataBuffer::getSamplePtr()
 {
 	int a1, a2, s1, s2;
 	float* addr;
-	fifo.prepareToRead(1, a1, a2, s1, s2);
+	fifo.prepareToRead(1, a1, s1, a2, s2);
 	if (s1 > 0)
 		addr = dataPtr + a1*nChannels;
 	else
@@ -55,7 +55,7 @@ float* LLDataBuffer::getSamplePtr()
 void LLDataBuffer::startSampleWrite()
 {
 	int a1, a2, s1, s2;
-	fifo.prepareToWrite(1, a1, a2, s1, s2);
+	fifo.prepareToWrite(1, a1, s1, a2, s2);
 	curChannel = 0;
 	wSize = s1 + s2;
 	writePtr = dataPtr + a1*nChannels;
