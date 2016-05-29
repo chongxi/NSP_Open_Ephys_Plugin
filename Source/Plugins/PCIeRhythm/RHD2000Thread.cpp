@@ -23,7 +23,7 @@
 
 #include "RHD2000Thread.h"
 #include "RHD2000Editor.h"
-
+#include "LLThread.h"
 
 #if defined(_WIN32)
 #define okLIB_NAME "okFrontPanel.dll"
@@ -196,6 +196,16 @@ RHD2000Thread::~RHD2000Thread()
     delete[] dacThresholds;
     delete[] dacChannelsToUpdate;
 
+}
+
+bool RHD2000Thread::isLLCapable()
+{
+	return true;
+}
+
+GenericLLProcessor* RHD2000Thread::getLLThread()
+{
+	return new LLThread(this);
 }
 
 bool RHD2000Thread::usesCustomNames()
@@ -1306,7 +1316,6 @@ bool RHD2000Thread::startAcquisition()
     dataBlock = new Rhd2000DataBlock(evalBoard->getNumEnabledDataStreams());
 
     std::cout << "Expecting " << getNumChannels() << " channels." << std::endl;
-	lastThreshold = false;
 	auxSamp = 0;
     //memset(filter_states,0,256*sizeof(double));
 
@@ -1371,6 +1380,7 @@ bool RHD2000Thread::stopAcquisition()
 
     if (deviceFound)
     {
+		const SpinLock::ScopedLockType sl(sLock);
         evalBoard->setContinuousRunMode(false);
         evalBoard->setMaxTimeStep(0);
         std::cout << "Flushing FIFO." << std::endl;
@@ -1450,14 +1460,17 @@ bool RHD2000Thread::updateBuffer()
 				{
 					chanIndex += 2 * RHD2132_16CH_OFFSET*numStreams;
 				}
+				llBuffer->startSampleWrite();
 				for (int chan = 0; chan < nChans; chan++)
 				{
 					channel++;
 					thisSample[channel] = float(*(uint16*)(bufferPtr + chanIndex) - 32768)*0.195f;
 					chanIndex += 2*numStreams;
-					if (dataStream == 0 && chan == 0) //First channel of the first enabled stream
-						checkThreshold(thisSample[channel]);
+					llBuffer->writeChannelSample(thisSample[channel]);
+					//if (dataStream == 0 && chan == 0) //First channel of the first enabled stream
+					//	checkThreshold(thisSample[channel]);
 				}
+				llBuffer->stopSampleWrite();
 			}
 			index += 64 * numStreams;
 			//now we can do the aux channels
@@ -1642,15 +1655,10 @@ bool RHD2000Thread::updateBuffer()
 
 }
 
-void RHD2000Thread::checkThreshold(float s)
+void RHD2000Thread::setOutputSigs(int sig)
 {
-	bool check = (s > THRESHOLD_CHECK);
-	if (!check != !lastThreshold)
-	{
-		//std::cout << "SIG" << std::endl;
-		lastThreshold = check;
-		evalBoard->setOuputSigs(check ? 0x0001 : 0x0000);
-	}
+	SpinLock::ScopedLockType sl(sLock);
+	evalBoard->setOuputSigs(sig);
 }
 
 int RHD2000Thread::getChannelFromHeadstage(int hs, int ch)

@@ -36,6 +36,9 @@
     <ClCompile Include="..\..\..\..\Source\Plugins\PCIeRhythm\OpenEphysLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Source\Plugins\PCIeRhythm\LLThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Source\Plugins\PCIeRhythm\RHD2000Editor.h">
@@ -52,6 +55,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Source\Plugins\PCIeRhythm\rhythm-api\rhd2000PCIe.h">
       <Filter>Source Files\rhythm-api</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Source\Plugins\PCIeRhythm\LLThread.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

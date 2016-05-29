@@ -41,6 +41,21 @@ DataThread::~DataThread()
     //deleteAndZero(dataBuffer);
 }
 
+bool DataThread::isLLCapable()
+{
+	return false;
+}
+
+GenericLLProcessor* DataThread::getLLThread()
+{
+	return nullptr;
+}
+
+void DataThread::setLLBuffer(LLDataBuffer* buffer)
+{
+	llBuffer = buffer;
+}
+
 void DataThread::run()
 {
 

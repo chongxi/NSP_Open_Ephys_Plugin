@@ -287,6 +287,15 @@
               file="Source/Audio/AudioComponent.h"/>
       </GROUP>
       <GROUP id="yQmqZWk" name="Processors">
+        <GROUP id="{341366E1-8119-2905-F682-8574A2435739}" name="LowLatency">
+          <FILE id="Yf8IcY" name="GenericLLProcessor.cpp" compile="1" resource="0"
+                file="Source/Processors/LowLatency/GenericLLProcessor.cpp"/>
+          <FILE id="Zo5YW4" name="GenericLLProcessor.h" compile="0" resource="0"
+                file="Source/Processors/LowLatency/GenericLLProcessor.h"/>
+          <FILE id="IWKGlx" name="LLDataBuffer.cpp" compile="1" resource="0"
+                file="Source/Processors/LowLatency/LLDataBuffer.cpp"/>
+          <FILE id="txOXST" name="LLDataBuffer.h" compile="0" resource="0" file="Source/Processors/LowLatency/LLDataBuffer.h"/>
+        </GROUP>
         <GROUP id="{D20DFFFD-08E8-5CC6-479A-07CECDE9BC86}" name="PlaceholderProcessor">
           <FILE id="SjUh94" name="PlaceholderProcessorEditor.cpp" compile="1"
                 resource="0" file="Source/Processors/PlaceholderProcessor/PlaceholderProcessorEditor.cpp"/>

@@ -263,6 +263,8 @@
     <ClCompile Include="..\..\Source\AccessClass.cpp"/>
     <ClCompile Include="..\..\Source\Network\PracticalSocket.cpp"/>
     <ClCompile Include="..\..\Source\Audio\AudioComponent.cpp"/>
+    <ClCompile Include="..\..\Source\Processors\LowLatency\GenericLLProcessor.cpp"/>
+    <ClCompile Include="..\..\Source\Processors\LowLatency\LLDataBuffer.cpp"/>
     <ClCompile Include="..\..\Source\Processors\PlaceholderProcessor\PlaceholderProcessorEditor.cpp"/>
     <ClCompile Include="..\..\Source\Processors\PlaceholderProcessor\PlaceholderProcessor.cpp"/>
     <ClCompile Include="..\..\Source\Processors\Dsp\LinearSmoothedValueAtomic.cpp"/>
@@ -1474,6 +1476,8 @@
     <ClInclude Include="..\..\Source\AccessClass.h"/>
     <ClInclude Include="..\..\Source\Network\PracticalSocket.h"/>
     <ClInclude Include="..\..\Source\Audio\AudioComponent.h"/>
+    <ClInclude Include="..\..\Source\Processors\LowLatency\GenericLLProcessor.h"/>
+    <ClInclude Include="..\..\Source\Processors\LowLatency\LLDataBuffer.h"/>
     <ClInclude Include="..\..\Source\Processors\PlaceholderProcessor\PlaceholderProcessorEditor.h"/>
     <ClInclude Include="..\..\Source\Processors\PlaceholderProcessor\PlaceholderProcessor.h"/>
     <ClInclude Include="..\..\Source\Processors\Dsp\LinearSmoothedValueAtomic.h"/>

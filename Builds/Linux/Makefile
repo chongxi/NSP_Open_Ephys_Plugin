@@ -55,6 +55,8 @@ OBJECTS := \
   $(OBJDIR)/AccessClass_de9602d5.o \
   $(OBJDIR)/PracticalSocket_2574ecc8.o \
   $(OBJDIR)/AudioComponent_521bd9c9.o \
+  $(OBJDIR)/GenericLLProcessor_819fc9fb.o \
+  $(OBJDIR)/LLDataBuffer_6c9f1c0a.o \
   $(OBJDIR)/PlaceholderProcessorEditor_7b4cbcf7.o \
   $(OBJDIR)/PlaceholderProcessor_167f09aa.o \
   $(OBJDIR)/LinearSmoothedValueAtomic_df1e5b97.o \
@@ -189,6 +191,16 @@ $(OBJDIR)/PracticalSocket_2574ecc8.o: ../../Source/Network/PracticalSocket.cpp
 $(OBJDIR)/AudioComponent_521bd9c9.o: ../../Source/Audio/AudioComponent.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling AudioComponent.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/GenericLLProcessor_819fc9fb.o: ../../Source/Processors/LowLatency/GenericLLProcessor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling GenericLLProcessor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/LLDataBuffer_6c9f1c0a.o: ../../Source/Processors/LowLatency/LLDataBuffer.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling LLDataBuffer.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/PlaceholderProcessorEditor_7b4cbcf7.o: ../../Source/Processors/PlaceholderProcessor/PlaceholderProcessorEditor.cpp

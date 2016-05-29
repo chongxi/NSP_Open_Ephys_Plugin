@@ -30,6 +30,7 @@
 #include "../GenericProcessor/GenericProcessor.h"
 #include "../../UI/UIComponent.h"
 
+#define LLBUFFER_NUM_SAMPLES 256
 /**
 
   Creates and controls a thread for reading data from external sources.
@@ -116,6 +117,9 @@ private:
 
     ScopedPointer<DataThread> dataThread;
     DataBuffer* inputBuffer;
+
+	ScopedPointer<GenericLLProcessor> llProcessor;
+	ScopedPointer<LLDataBuffer> llBuffer;
 
     uint64 timestamp;
     //uint64* eventCodeBuffer;

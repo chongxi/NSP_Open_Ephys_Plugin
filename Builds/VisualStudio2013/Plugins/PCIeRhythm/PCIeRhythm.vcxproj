@@ -119,6 +119,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\Source\Plugins\PCIeRhythm\LLThread.cpp" />
     <ClCompile Include="..\..\..\..\Source\Plugins\PCIeRhythm\OpenEphysLib.cpp" />
     <ClCompile Include="..\..\..\..\Source\Plugins\PCIeRhythm\RHD2000Editor.cpp" />
     <ClCompile Include="..\..\..\..\Source\Plugins\PCIeRhythm\RHD2000Thread.cpp" />
@@ -127,6 +128,7 @@
     <ClCompile Include="..\..\..\..\Source\Plugins\PCIeRhythm\rhythm-api\rhd2000registers.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Source\Plugins\PCIeRhythm\LLThread.h" />
     <ClInclude Include="..\..\..\..\Source\Plugins\PCIeRhythm\RHD2000Editor.h" />
     <ClInclude Include="..\..\..\..\Source\Plugins\PCIeRhythm\RHD2000Thread.h" />
     <ClInclude Include="..\..\..\..\Source\Plugins\PCIeRhythm\rhythm-api\rhd2000datablock.h" />

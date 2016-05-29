@@ -35,6 +35,9 @@
     <Filter Include="open-ephys\Source\Processors">
       <UniqueIdentifier>{3DDEC88C-BAA5-2DDA-A59F-0FB74070AB82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="open-ephys\Source\Processors\LowLatency">
+      <UniqueIdentifier>{79C79D63-6472-92FA-8E78-573BDE3B7BCE}</UniqueIdentifier>
+    </Filter>
     <Filter Include="open-ephys\Source\Processors\PlaceholderProcessor">
       <UniqueIdentifier>{94BEEE4D-841E-5C1B-4699-8D4E27C77CD7}</UniqueIdentifier>
     </Filter>
@@ -417,6 +420,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Audio\AudioComponent.cpp">
       <Filter>open-ephys\Source\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processors\LowLatency\GenericLLProcessor.cpp">
+      <Filter>open-ephys\Source\Processors\LowLatency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Processors\LowLatency\LLDataBuffer.cpp">
+      <Filter>open-ephys\Source\Processors\LowLatency</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Processors\PlaceholderProcessor\PlaceholderProcessorEditor.cpp">
       <Filter>open-ephys\Source\Processors\PlaceholderProcessor</Filter>
@@ -1907,6 +1916,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Audio\AudioComponent.h">
       <Filter>open-ephys\Source\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processors\LowLatency\GenericLLProcessor.h">
+      <Filter>open-ephys\Source\Processors\LowLatency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Processors\LowLatency\LLDataBuffer.h">
+      <Filter>open-ephys\Source\Processors\LowLatency</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Processors\PlaceholderProcessor\PlaceholderProcessorEditor.h">
       <Filter>open-ephys\Source\Processors\PlaceholderProcessor</Filter>

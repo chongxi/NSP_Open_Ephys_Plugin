@@ -131,7 +131,14 @@ namespace PCIeRhythm {
 
 		static DataThread* createDataThread(SourceNode* sn);
 
+		void setOutputSigs(int sigs);
+
+		bool isLLCapable() override;
+		GenericLLProcessor* getLLThread() override;
+
+
 	private:
+		SpinLock sLock;
 
 		bool enableHeadstage(int hsNum, bool enabled, int nStr = 1, int strChans = 32);
 		void updateBoardStreams();
@@ -206,10 +213,6 @@ namespace PCIeRhythm {
 		bool newScan;
 		ScopedPointer<RHDImpedanceMeasure> impedanceThread;
 		bool ledsEnabled;
-
-		bool lastThreshold;
-
-		void checkThreshold(float s);
 
 		int auxSamp;
 
