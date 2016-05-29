@@ -40,8 +40,14 @@ void LLThread::prepareToAcquire()
 	//setPriority(5);
 }
 
-void LLThread::process(float* buffer)
+void LLThread::process(float* buffer) //Called once per sample
 {
+	/*
+	for (int i=0; i < nChannels; i++) //nChannels is a protected member with the number of channels
+	{
+		whatever(buffer[i]) //channels in the buffer can be accessed by simple indexing
+	}
+	*/
 	if (buffer[0] > THRESHOLD_CHECK)
 		dataThread->setOutputSigs(0x1111);
 	else
