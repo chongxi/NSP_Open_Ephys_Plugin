@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "GenericLLProcessor.h"
+#define MEASURE_LL_PROC_TIME
 
 GenericLLProcessor::GenericLLProcessor() : Thread("LLProcessThread")
 {
@@ -59,7 +60,17 @@ void GenericLLProcessor::run()
 	while (!threadShouldExit())
 	{
 		dataPtr = buffer->getSamplePtr();
-		if (dataPtr)
+		if (dataPtr) 
+		{
+#ifdef MEASURE_LL_PROC_TIME
+			int64 tick = Time::getHighResolutionTicks();
+#endif
 			process(dataPtr);
+#ifdef MEASURE_LL_PROC_TIME
+			int64 tock = Time::getHighResolutionTicks() - tick;
+			std::cout << "LL Process time: " << Time::highResolutionTicksToSeconds(tock) << std::endl;
+#endif
+
+		}
 	}
 }
