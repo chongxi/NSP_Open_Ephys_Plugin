@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace PCIeRhythm
 {
 	class RHD2000Thread;
+	class LLOutputThread;
 
 	class LLThread : public GenericLLProcessor
 	{
@@ -35,10 +36,28 @@ namespace PCIeRhythm
 		LLThread(RHD2000Thread* t);
 		~LLThread();
 		void prepareToAcquire() override;
+		void prepareToStop() override;
+
 	protected:
 		void process(float* buffer);
 	private:
 		RHD2000Thread* dataThread;
+		ScopedPointer<LLOutputThread> outputThread;
+	};
+
+	class LLOutputThread : public Thread
+	{
+	public:
+		LLOutputThread(RHD2000Thread* t);
+		~LLOutputThread();
+
+		void run();
+		void send(int word);
+		
+	private:
+		RHD2000Thread* dataThread;
+		int output_word {0};
+		static const int TIMEOUT_MSEC {10};
 	};
 
 }

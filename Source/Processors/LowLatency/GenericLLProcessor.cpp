@@ -41,6 +41,7 @@ void GenericLLProcessor::startAcquisition(int numChannels)
 
 void GenericLLProcessor::stopAcquisition()
 {
+	prepareToStop();
 	if (!stopThread(100))
 		std::cerr << "LL Process thread forcefully closed" << std::endl;
 }
@@ -51,6 +52,10 @@ void GenericLLProcessor::setInputBuffer(LLDataBuffer* bufferPtr)
 }
 
 void GenericLLProcessor::prepareToAcquire()
+{
+}
+
+void GenericLLProcessor::prepareToStop()
 {
 }
 

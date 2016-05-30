@@ -30,14 +30,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using namespace PCIeRhythm;
 
 LLThread::LLThread(RHD2000Thread* t) : dataThread(t)
-{}
+{
+	outputThread = new LLOutputThread(t);
+}
 
 LLThread::~LLThread()
 {}
 
 void LLThread::prepareToAcquire()
 {
-	//setPriority(5);
+	//setPriority(7);
+	outputThread->startThread();
+}
+
+void LLThread::prepareToStop()
+{
+	if (!outputThread->stopThread(100))
+		std::cerr << "Output thread forcefully closed" << std::endl;
 }
 
 void LLThread::process(float* buffer) //Called once per sample
@@ -48,8 +57,48 @@ void LLThread::process(float* buffer) //Called once per sample
 		whatever(buffer[i]) //channels in the buffer can be accessed by simple indexing
 	}
 	*/
-	if (buffer[0] > THRESHOLD_CHECK)
-		dataThread->setOutputSigs(0x1111);
+	double temp =0;
+	for (int i=0; i < 32; i++)
+	{
+		for (int j=0; j < nChannels; j++)
+			temp += buffer[j]/(i+1);
+	}
+	//std::cout << temp << std::endl;
+	if (buffer[0] > temp)
+		outputThread->send(0xFFFFFFFF);
 	else
-		dataThread->setOutputSigs(0);
+		outputThread->send(0x00000000);
+
 }
+
+
+LLOutputThread::LLOutputThread(RHD2000Thread* t) : 
+	Thread("OutputThread"), 
+	dataThread(t) 
+{ }
+
+LLOutputThread::~LLOutputThread()
+{ }
+
+void LLOutputThread::run() {
+	
+	while (!threadShouldExit()) {
+
+		if (!wait(TIMEOUT_MSEC))
+			continue;
+
+		dataThread->setOutputSigs(output_word);
+	}
+}
+
+void LLOutputThread::send(int word) 
+{
+	output_word = word;
+	notify();
+}
+
+
+
+
+
+

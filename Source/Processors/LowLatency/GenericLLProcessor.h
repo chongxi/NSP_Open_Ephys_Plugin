@@ -39,6 +39,7 @@ public:
 	void stopAcquisition();
 
 	virtual void prepareToAcquire();
+	virtual void prepareToStop();
 
 	void run();
 	void setInputBuffer(LLDataBuffer* bufferPtr);
