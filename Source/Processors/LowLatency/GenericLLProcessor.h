@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../PluginManager/OpenEphysPlugin.h"
 #include "LLDataBuffer.h"
 
-#define MEASURE_LL_PROC_TIME
+//#define MEASURE_LL_PROC_TIME
 
 class DataThread;
 

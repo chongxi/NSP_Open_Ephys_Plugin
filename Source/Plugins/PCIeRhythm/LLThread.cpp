@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "LLThread.h"
 #include "RHD2000Thread.h"
 
-#define THRESHOLD_CHECK 10.0f
+#define THRESHOLD_CHECK 1000.0f
 
 using namespace PCIeRhythm;
 
@@ -39,7 +39,7 @@ LLThread::~LLThread()
 
 void LLThread::prepareToAcquire()
 {
-//	setPriority(10);
+	//std::cout << "PRIO: " << setPriority(7) << std::endl;
 	outputThread->startThread();
 }
 
@@ -58,16 +58,20 @@ void LLThread::process(float* buffer) //Called once per sample
 	}
 	*/
 	double temp =0;
-	for (int i=0; i < 32; i++)
+	for (int i=0; i < 16; i++)
 	{
 		for (int j=0; j < nChannels; j++)
 			temp += buffer[j]/(i+1);
 	}
 	//std::cout << temp << std::endl;
-	if (buffer[0] > temp)
+	//std::cout << buffer[0] << std::endl;
+	if (buffer[0] > THRESHOLD_CHECK)
+		//dataThread->setOutputSigs(0xFFFFFFFF);
 		outputThread->send(0xFFFFFFFF);
 	else
+		//dataThread->setOutputSigs(0x0);
 		outputThread->send(0x00000000);
+	buffer[1] = temp;
 
 }
 

@@ -46,9 +46,9 @@
 
 #define THRESHOLD_CHECK 1.0f
 
-//#define DEBUG_EMULATE_HEADSTAGES 8
-//#define DEBUG_EMULATE_64CH
-//#define DEBUG_REAL_HEADSTAGE 5
+#define DEBUG_EMULATE_HEADSTAGES 8
+#define DEBUG_EMULATE_64CH
+#define DEBUG_REAL_HEADSTAGE 5
 
 #define INIT_STEP 256
 
@@ -1452,6 +1452,7 @@ bool RHD2000Thread::updateBuffer()
 			//skip the aux channels
 			index += numStreams * 6;
 			// do the neural data channels first
+			llBuffer->startSampleWrite();
 			for (int dataStream = 0; dataStream < numStreams; dataStream++)
 			{
 				int nChans = numChannelsPerDataStream[dataStream];
@@ -1460,7 +1461,7 @@ bool RHD2000Thread::updateBuffer()
 				{
 					chanIndex += 2 * RHD2132_16CH_OFFSET*numStreams;
 				}
-				llBuffer->startSampleWrite();
+				
 				for (int chan = 0; chan < nChans; chan++)
 				{
 					channel++;
@@ -1470,8 +1471,9 @@ bool RHD2000Thread::updateBuffer()
 					//if (dataStream == 0 && chan == 0) //First channel of the first enabled stream
 					//	checkThreshold(thisSample[channel]);
 				}
-				llBuffer->stopSampleWrite();
+				
 			}
+			llBuffer->stopSampleWrite();
 			index += 64 * numStreams;
 			//now we can do the aux channels
 			auxIndex += 2*numStreams;
