@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../PluginManager/OpenEphysPlugin.h"
 #include "LLDataBuffer.h"
 
+#define MEASURE_LL_PROC_TIME
+
 class DataThread;
 
 class PLUGIN_API GenericLLProcessor : public Thread
@@ -49,6 +51,13 @@ protected:
 
 	int nChannels;
 	LLDataBuffer* buffer;
+#ifdef MEASURE_LL_PROC_TIME
+	double min {1000};
+	double max {0};
+	double run_time_sec {0.0};
+	double total_iter {0.0};
+
+#endif
 
 };
 

@@ -39,7 +39,7 @@ LLThread::~LLThread()
 
 void LLThread::prepareToAcquire()
 {
-	//setPriority(7);
+//	setPriority(10);
 	outputThread->startThread();
 }
 
