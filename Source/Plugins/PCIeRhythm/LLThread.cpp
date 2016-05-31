@@ -63,6 +63,7 @@ void LLThread::process(float* buffer) //Called once per sample
 		for (int j=0; j < nChannels; j++)
 			temp += buffer[j]/(i+1);
 	}
+std::cout << "Aux input: " << dataThread->getInputSigs() << std::endl;
 	//std::cout << temp << std::endl;
 	//std::cout << buffer[0] << std::endl;
 	if (buffer[0] > THRESHOLD_CHECK)

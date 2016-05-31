@@ -113,6 +113,7 @@ namespace PCIeRhythm {
 		void closePipe();
 
 		void setOuputSigs(int sigs);
+		uint16_t getInputSigs();
 
 		//void flush();
 
@@ -149,7 +150,8 @@ namespace PCIeRhythm {
 			SpiRunning = 0x04,
 			DataClkLocked = 0x08,
 			BoardId = 0x0A,
-			BoardVersion = 0x0C
+			BoardVersion = 0x0C,
+			AuxInputs = 0x0E
 		};
 
 		AmplifierSampleRate sampleRate;

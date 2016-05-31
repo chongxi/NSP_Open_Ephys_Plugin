@@ -132,6 +132,7 @@ namespace PCIeRhythm {
 		static DataThread* createDataThread(SourceNode* sn);
 
 		void setOutputSigs(int sigs);
+		uint16 getInputSigs();
 
 		bool isLLCapable() override;
 		GenericLLProcessor* getLLThread() override;

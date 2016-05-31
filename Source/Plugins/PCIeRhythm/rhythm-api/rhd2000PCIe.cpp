@@ -1042,3 +1042,8 @@ void rhd2000PCIe::setOuputSigs(int sigs)
 {
 	writeRegister(AuxOutputs, sigs);
 }
+
+uint16_t rhd2000PCIe::getInputSigs()
+{
+	readRegister(AuxInputs);
+}

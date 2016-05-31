@@ -1663,6 +1663,11 @@ void RHD2000Thread::setOutputSigs(int sig)
 	evalBoard->setOuputSigs(sig);
 }
 
+uint16 RHD2000Thread::getInputSigs()
+{
+	return evalBoard->getInputSigs();
+}
+
 int RHD2000Thread::getChannelFromHeadstage(int hs, int ch)
 {
     int channelCount = 0;
