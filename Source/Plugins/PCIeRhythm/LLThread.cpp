@@ -49,7 +49,7 @@ void LLThread::prepareToStop()
 		std::cerr << "Output thread forcefully closed" << std::endl;
 }
 
-void LLThread::process(float* buffer) //Called once per sample
+void LLThread::process(float* buffer, uint16* event) //Called once per sample
 {
 	/*
 	for (int i=0; i < nChannels; i++) //nChannels is a protected member with the number of channels
@@ -63,7 +63,7 @@ void LLThread::process(float* buffer) //Called once per sample
 		for (int j=0; j < nChannels; j++)
 			temp += buffer[j]/(i+1);
 	}
-std::cout << "Aux input: " << dataThread->getInputSigs() << std::endl;
+std::cout << "Aux input: " << *event << std::endl;
 	//std::cout << temp << std::endl;
 	//std::cout << buffer[0] << std::endl;
 	if (buffer[0] > THRESHOLD_CHECK)

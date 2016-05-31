@@ -32,19 +32,23 @@ public:
 	LLDataBuffer();
 	~LLDataBuffer();
 	void setBufferSize(int numChannels, int numSamples);
-	float* getSamplePtr();
+	void getSamplePtr(float**, uint16**);
 	void startSampleWrite();
 	void stopSampleWrite();
 	void writeChannelSample(float value);
+	void writeEvent(uint16 data);
 	void flush();
 
 private:
 	AbstractFifo fifo;
 	HeapBlock<float> data;
+	HeapBlock<uint16> eventData;
 	int nChannels;
 	int curChannel;
 	float* dataPtr;
+	uint16* eventPtr;
 	float* writePtr;
+	uint16* eventWritePtr;
 	int wSize;
 };
 

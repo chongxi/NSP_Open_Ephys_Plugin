@@ -35,21 +35,27 @@ void LLDataBuffer::setBufferSize(int numChannels, int numSamples)
 {
 	fifo.setTotalSize(numSamples);
 	data.malloc(numSamples * numChannels);
+	eventData.malloc(numSamples);
 	nChannels = numChannels;
 	dataPtr = data.getData();
+	eventPtr = eventData.getData();
 }
 
-float* LLDataBuffer::getSamplePtr()
+void LLDataBuffer::getSamplePtr(float** oAddr, uint16** oEvent)
 {
 	int a1, a2, s1, s2;
-	float* addr;
 	fifo.prepareToRead(1, a1, s1, a2, s2);
 	if (s1 > 0)
-		addr = dataPtr + a1*nChannels;
+	{
+		*oAddr = dataPtr + a1*nChannels;
+		*oEvent = eventPtr + a1;
+	}
 	else
-		addr = nullptr;
+	{
+		*oAddr = nullptr;
+		*oEvent = nullptr;
+	}
 	fifo.finishedRead(s1 + s2);
-	return addr;
 }
 
 void LLDataBuffer::startSampleWrite()
@@ -59,6 +65,7 @@ void LLDataBuffer::startSampleWrite()
 	curChannel = 0;
 	wSize = s1 + s2;
 	writePtr = dataPtr + a1*nChannels;
+	eventWritePtr = eventPtr+a1;
 }
 
 void LLDataBuffer::stopSampleWrite()
@@ -74,6 +81,11 @@ void LLDataBuffer::writeChannelSample(float value)
 
 	*(writePtr + curChannel) = value;
 	curChannel++;
+}
+
+void LLDataBuffer::writeEvent(uint16 value)
+{
+	*eventWritePtr = value;
 }
 
 void LLDataBuffer::flush()

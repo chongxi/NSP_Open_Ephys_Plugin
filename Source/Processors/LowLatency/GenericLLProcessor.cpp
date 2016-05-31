@@ -61,15 +61,16 @@ void GenericLLProcessor::prepareToStop()
 void GenericLLProcessor::run()
 {
 	float* dataPtr;
+	uint16* eventPtr;
 	while (!threadShouldExit())
 	{
-		dataPtr = buffer->getSamplePtr();
+		buffer->getSamplePtr(&dataPtr, &eventPtr);
 		if (dataPtr) 
 		{
 #ifdef MEASURE_LL_PROC_TIME
 			int64 tick = Time::getHighResolutionTicks();
 #endif
-			process(dataPtr);
+			process(dataPtr, eventPtr);
 #ifdef MEASURE_LL_PROC_TIME
 			int64 tock = Time::getHighResolutionTicks() - tick;
 			double secs = Time::highResolutionTicksToSeconds(tock);

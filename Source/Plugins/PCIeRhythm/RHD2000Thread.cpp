@@ -1389,7 +1389,6 @@ bool RHD2000Thread::stopAcquisition()
         //   evalBoard->run();
 
     }
-
     dataBuffer->clear();
 
     /*if (deviceFound)
@@ -1473,7 +1472,7 @@ bool RHD2000Thread::updateBuffer()
 				}
 				
 			}
-			llBuffer->stopSampleWrite();
+			
 			index += 64 * numStreams;
 			//now we can do the aux channels
 			auxIndex += 2*numStreams;
@@ -1519,6 +1518,8 @@ bool RHD2000Thread::updateBuffer()
 				index += 16;
 			}
 			eventCode = *(uint16*)(bufferPtr + index);
+			llBuffer->writeEvent(eventCode);
+			llBuffer->stopSampleWrite();
 			index += 4;
 			dataBuffer->addToBuffer(thisSample, &timestamp, &eventCode, 1);
 #if 0

@@ -47,7 +47,7 @@ public:
 	void setInputBuffer(LLDataBuffer* bufferPtr);
 
 protected:
-	virtual void process(float* dataPtr) = 0;
+	virtual void process(float* dataPtr, uint16* eventPtr) = 0;
 
 	int nChannels;
 	LLDataBuffer* buffer;

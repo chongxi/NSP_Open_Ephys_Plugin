@@ -39,7 +39,7 @@ namespace PCIeRhythm
 		void prepareToStop() override;
 
 	protected:
-		void process(float* buffer);
+		void process(float* buffer, uint16* event);
 	private:
 		RHD2000Thread* dataThread;
 		ScopedPointer<LLOutputThread> outputThread;
