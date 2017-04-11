@@ -87,6 +87,7 @@ namespace PCIeRhythm {
 		void setMaxTimeStep(unsigned int maxTimeStep);
 
 		void run();
+		void xike_enable(bool eof);
 		bool isRunning() const;
 
 		void setCableDelay(BoardPort port, int delay);
@@ -113,6 +114,7 @@ namespace PCIeRhythm {
 		void closePipe();
 
 		void setOuputSigs(int sigs);
+		uint16_t getInputSigs();
 
 		//void flush();
 
@@ -126,6 +128,7 @@ namespace PCIeRhythm {
 			MaxTimeStepMsb = 0x04,
 			DataFreqPll = 0x06,
 			MisoDelay = 0x08,
+			XikeEnable = 0x0A,
 			AuxCmdBank1 = 0x10,
 			AuxCmdBank2 = 0x12,
 			AuxCmdBank3 = 0x14,
@@ -149,7 +152,8 @@ namespace PCIeRhythm {
 			SpiRunning = 0x04,
 			DataClkLocked = 0x08,
 			BoardId = 0x0A,
-			BoardVersion = 0x0C
+			BoardVersion = 0x0C,
+			AuxInputs = 0x0E
 		};
 
 		AmplifierSampleRate sampleRate;

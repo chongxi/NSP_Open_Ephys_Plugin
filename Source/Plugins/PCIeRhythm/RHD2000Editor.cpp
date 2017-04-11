@@ -24,6 +24,11 @@
 #include "RHD2000Editor.h"
 #include <cmath>
 #include "RHD2000Thread.h"
+#include <iostream>
+#include "cpp-subprocess/subprocess.hpp"
+
+
+using namespace subprocess;
 using namespace PCIeRhythm;
 
 #ifdef WIN32
@@ -671,7 +676,7 @@ RHD2000Editor::RHD2000Editor(GenericProcessor* parentNode,
     ttlSettleLabel->setFont(Font("Small Text", 11, Font::plain));
     ttlSettleLabel->setBounds(255,80,100,20);
     ttlSettleLabel->setColour(Label::textColourId, Colours::darkgrey);
-    addAndMakeVisible(ttlSettleLabel);
+    // addAndMakeVisible(ttlSettleLabel);
 
 
     ttlSettleCombo = new ComboBox("FastSettleComboBox");
@@ -683,21 +688,21 @@ RHD2000Editor::RHD2000Editor(GenericProcessor* parentNode,
         ttlSettleCombo->addItem("TTL"+String(1+k),2+k);
     }
     ttlSettleCombo->setSelectedId(1, sendNotification);
-    addAndMakeVisible(ttlSettleCombo);
+    // addAndMakeVisible(ttlSettleCombo);
 
-    dacTTLButton = new UtilityButton("DAC TTL", Font("Small Text", 13, Font::plain));
-    dacTTLButton->setRadius(3.0f);
-    dacTTLButton->setBounds(260,25,65,18);
-    dacTTLButton->addListener(this);
-    dacTTLButton->setClickingTogglesState(true);
-    dacTTLButton->setTooltip("Enable/disable DAC Threshold TTL Output");
-    addAndMakeVisible(dacTTLButton);
+    fifoBtn = new UtilityButton("RAM FIFO", Font("Small Text", 14, Font::plain));
+    fifoBtn->setRadius(3.0f);
+    fifoBtn->setBounds(260,25,65,50);
+    fifoBtn->addListener(this);
+    fifoBtn->setClickingTogglesState(true);
+    fifoBtn->setTooltip("Enable/disable RAM FIFO FOR REAL TIME PROCESSING");
+    addAndMakeVisible(fifoBtn);
 
     dacHPFlabel = new Label("DAC HPF","DAC HPF");
     dacHPFlabel->setFont(Font("Small Text", 11, Font::plain));
     dacHPFlabel->setBounds(260,42,100,20);
     dacHPFlabel->setColour(Label::textColourId, Colours::darkgrey);
-    addAndMakeVisible(dacHPFlabel);
+    // addAndMakeVisible(dacHPFlabel);
 
     dacHPFcombo = new ComboBox("dacHPFCombo");
     dacHPFcombo->setBounds(260,60,60,18);
@@ -709,7 +714,7 @@ RHD2000Editor::RHD2000Editor(GenericProcessor* parentNode,
         dacHPFcombo->addItem(String(HPFvalues[k])+" Hz",2+k);
     }
     dacHPFcombo->setSelectedId(1, sendNotification);
-    addAndMakeVisible(dacHPFcombo);
+    // addAndMakeVisible(dacHPFcombo);
 
 }
 
@@ -845,9 +850,22 @@ void RHD2000Editor::buttonEvent(Button* button)
 		CoreServices::updateSignalChain(this);
         std::cout << "Editor visible." << "\n";
     }
-    else if (button == dacTTLButton)
+    else if (button == fifoBtn)
     {
-        board->setTTLoutputMode(dacTTLButton->getToggleState());
+	printf("RAM FIFO State: %d\n", fifoBtn->getToggleState()); 
+	if(fifoBtn->getToggleState()){
+	    // Popen({"ls -l"});
+	    board->stopAcquisition();
+	    board->setXikeEnable(fifoBtn->getToggleState());
+	    Popen({"fifo", "5120000"}, input{"/dev/xillybus_mua_32"}, output{"./pcie.bin"});
+	    board->startAcquisition();
+	}
+	else{
+	    board->stopAcquisition();
+	    board->setXikeEnable(fifoBtn->getToggleState());
+	    if(acquisitionIsActive)
+		board->startAcquisition();
+	}
     }
     else if (button == dspoffsetButton && !acquisitionIsActive)
     {
@@ -923,7 +941,7 @@ void RHD2000Editor::saveCustomParameters(XmlElement* xml)
     xml->setAttribute("AudioOutputR", electrodeButtons[1]->getChannelNum());
     xml->setAttribute("NoiseSlicer", audioInterface->getNoiseSlicerLevel());
     xml->setAttribute("TTLFastSettle", ttlSettleCombo->getSelectedId());
-    xml->setAttribute("DAC_TTL", dacTTLButton->getToggleState());
+    xml->setAttribute("DAC_TTL", fifoBtn->getToggleState());
     xml->setAttribute("DAC_HPF", dacHPFcombo->getSelectedId());
     xml->setAttribute("DSPOffset", dspoffsetButton->getToggleState());
     xml->setAttribute("DSPCutoffFreq", dspInterface->getDspCutoffFreq());
@@ -946,7 +964,7 @@ void RHD2000Editor::loadCustomParameters(XmlElement* xml)
     //board->assignAudioOut(1, xml->getIntAttribute("AudioOutputR"));
     audioInterface->setNoiseSlicerLevel(xml->getIntAttribute("NoiseSlicer"));
     ttlSettleCombo->setSelectedId(xml->getIntAttribute("TTLFastSettle"));
-    dacTTLButton->setToggleState(xml->getBoolAttribute("DAC_TTL"), sendNotification);
+    fifoBtn->setToggleState(xml->getBoolAttribute("RAM_FIFO"), sendNotification);
     dacHPFcombo->setSelectedId(xml->getIntAttribute("DAC_HPF"));
     dspoffsetButton->setToggleState(xml->getBoolAttribute("DSPOffset"), sendNotification);
     dspInterface->setDspCutoffFreq(xml->getDoubleAttribute("DSPCutoffFreq"));

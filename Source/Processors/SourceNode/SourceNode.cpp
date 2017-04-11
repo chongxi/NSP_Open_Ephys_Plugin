@@ -31,7 +31,7 @@
 SourceNode::SourceNode(const String& name_, DataThreadCreator dt)
     : GenericProcessor(name_),
       sourceCheckInterval(2000), wasDisabled(true), dataThread(nullptr),
-	  inputBuffer(0), ttlState(0)
+	  inputBuffer(0), ttlState(0), llBuffer(nullptr), llProcessor(nullptr)
 {
 		dataThread = dt(this);
 
@@ -50,6 +50,17 @@ SourceNode::SourceNode(const String& name_, DataThreadCreator dt)
             eventChannelState[i] = 0;
         }
 
+		//TODO: to do correctly
+		if (dataThread->isLLCapable())
+		{
+			llProcessor = dataThread->getLLThread();
+			if (llProcessor)
+			{
+				llBuffer = new LLDataBuffer();
+				llProcessor->setInputBuffer(llBuffer);
+				dataThread->setLLBuffer(llBuffer);
+			}
+		}
     }
     else
     {
@@ -75,6 +86,8 @@ SourceNode::~SourceNode()
     {
         std::cout << "Forcing thread to stop." << std::endl;
         dataThread->stopThread(500);
+		if (llProcessor)
+			llProcessor->stopThread(100);
     }
 
 
@@ -109,6 +122,8 @@ void SourceNode::updateSettings()
     }
 
     dataThread->updateChannels();
+	if (llProcessor)
+		llBuffer->setBufferSize(dataThread->getNumHeadstageOutputs(), LLBUFFER_NUM_SAMPLES);
 
 }
 
@@ -286,6 +301,11 @@ bool SourceNode::enable()
     if (dataThread != 0)
     {
         dataThread->startAcquisition();
+		if (llProcessor)
+		{
+			llBuffer->flush();
+			llProcessor->startAcquisition(dataThread->getNumHeadstageOutputs());
+		}
         return true;
     }
     else
@@ -300,8 +320,12 @@ bool SourceNode::disable()
 
     std::cout << "Source node received disable signal" << std::endl;
 
-    if (dataThread != 0)
-        dataThread->stopAcquisition();
+	if (dataThread != 0)
+	{
+		dataThread->stopAcquisition();
+		llProcessor->stopAcquisition();
+		llBuffer->flush();
+	}
 
     startTimer(2000); // timer to check for connected source
 

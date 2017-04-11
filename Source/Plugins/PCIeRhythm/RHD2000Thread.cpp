@@ -23,7 +23,7 @@
 
 #include "RHD2000Thread.h"
 #include "RHD2000Editor.h"
-
+#include "LLThread.h"
 
 #if defined(_WIN32)
 #define okLIB_NAME "okFrontPanel.dll"
@@ -95,6 +95,7 @@ RHD2000Thread::RHD2000Thread(SourceNode* sn) : DataThread(sn),
     desiredLowerBandwidth(1.0f),
     boardSampleRate(30000.0f),
     savedSampleRateIndex(16),
+    // cableLengthPortA(0.324f), cableLengthPortB(0.324f), cableLengthPortC(0.324f), cableLengthPortD(0.324f),
     cableLengthPortA(0.914f), cableLengthPortB(0.914f), cableLengthPortC(0.914f), cableLengthPortD(0.914f), // default is 3 feet (0.914 m),
     audioOutputL(-1), audioOutputR(-1) ,numberingScheme(1),
 	newScan(true), ledsEnabled(true)
@@ -196,6 +197,16 @@ RHD2000Thread::~RHD2000Thread()
     delete[] dacThresholds;
     delete[] dacChannelsToUpdate;
 
+}
+
+bool RHD2000Thread::isLLCapable()
+{
+	return true;
+}
+
+GenericLLProcessor* RHD2000Thread::getLLThread()
+{
+	return new LLThread(this);
 }
 
 bool RHD2000Thread::usesCustomNames()
@@ -472,7 +483,7 @@ void RHD2000Thread::scanPorts()
 			if (id == CHIP_ID_RHD2132 || id == CHIP_ID_RHD2216 ||
 				(id == CHIP_ID_RHD2164 && register59Value == REGISTER_59_MISO_A))
 			{
-				//  std::cout << "Device ID found: " << id << std::endl;
+				std::cout << "Device ID found: " << id << std::endl;
 
 				sumGoodDelays.set(hs, sumGoodDelays[hs] + 1);
 
@@ -490,12 +501,12 @@ void RHD2000Thread::scanPorts()
 		}
 	}
 
-	// std::cout << "Chip IDs found: ";
-	// for (int i = 0; i < MAX_NUM_DATA_STREAMS; ++i)
-	// {
-	//     std::cout << chipId[i] << " ";
-	// }
-	//std::cout << std::endl;
+	std::cout << "Chip IDs found: ";
+	for (int i = 0; i < MAX_NUM_DATA_STREAMS; ++i)
+	{
+	    std::cout << chipId[i] << " ";
+	}
+	std::cout << std::endl;
 
 #if DEBUG_EMULATE_HEADSTAGES > 0
 	if (tmpChipId[DEBUG_REAL_HEADSTAGE] > 0)
@@ -616,6 +627,16 @@ int RHD2000Thread::deviceId(Rhd2000DataBlock* dataBlock, int stream, int& regist
                         (char) dataBlock->auxiliaryData[stream][2][24] == 'R' &&
                         (char) dataBlock->auxiliaryData[stream][2][25] == 'H' &&
                         (char) dataBlock->auxiliaryData[stream][2][26] == 'D');
+
+    std::cout << "Stream Number" << stream << " aux " << (char) dataBlock->auxiliaryData[stream][2][32] << std::endl;
+    std::cout << "Stream Number" << stream << " aux " << (char) dataBlock->auxiliaryData[stream][2][33] << std::endl;
+    std::cout << "Stream Number" << stream << " aux " << (char) dataBlock->auxiliaryData[stream][2][34] << std::endl;
+    std::cout << "Stream Number" << stream << " aux " << (char) dataBlock->auxiliaryData[stream][2][35] << std::endl;
+    std::cout << "Stream Number" << stream << " aux " << (char) dataBlock->auxiliaryData[stream][2][36] << std::endl;
+    std::cout << "Stream Number" << stream << " aux " << (char) dataBlock->auxiliaryData[stream][2][24] << std::endl;
+    std::cout << "Stream Number" << stream << " aux " << (char) dataBlock->auxiliaryData[stream][2][25] << std::endl;
+    std::cout << "Stream Number" << stream << " aux " << (char) dataBlock->auxiliaryData[stream][2][26] << std::endl;
+
 
     // If the SPI communication is bad, return -1.  Otherwise, return the Intan
     // chip ID number stored in ROM regstier 63.
@@ -1069,6 +1090,10 @@ void RHD2000Thread::enableAdcs(bool t)
 
 }
 
+void RHD2000Thread::setXikeEnable(bool enable)
+{
+    evalBoard->xike_enable(!enable);
+}
 
 void RHD2000Thread::setSampleRate(int sampleRateIndex, bool isTemporary)
 {
@@ -1306,7 +1331,6 @@ bool RHD2000Thread::startAcquisition()
     dataBlock = new Rhd2000DataBlock(evalBoard->getNumEnabledDataStreams());
 
     std::cout << "Expecting " << getNumChannels() << " channels." << std::endl;
-	lastThreshold = false;
 	auxSamp = 0;
     //memset(filter_states,0,256*sizeof(double));
 
@@ -1371,6 +1395,7 @@ bool RHD2000Thread::stopAcquisition()
 
     if (deviceFound)
     {
+		const SpinLock::ScopedLockType sl(sLock);
         evalBoard->setContinuousRunMode(false);
         evalBoard->setMaxTimeStep(0);
         std::cout << "Flushing FIFO." << std::endl;
@@ -1379,7 +1404,6 @@ bool RHD2000Thread::stopAcquisition()
         //   evalBoard->run();
 
     }
-
     dataBuffer->clear();
 
     /*if (deviceFound)
@@ -1442,6 +1466,7 @@ bool RHD2000Thread::updateBuffer()
 			//skip the aux channels
 			index += numStreams * 6;
 			// do the neural data channels first
+			llBuffer->startSampleWrite();
 			for (int dataStream = 0; dataStream < numStreams; dataStream++)
 			{
 				int nChans = numChannelsPerDataStream[dataStream];
@@ -1450,15 +1475,19 @@ bool RHD2000Thread::updateBuffer()
 				{
 					chanIndex += 2 * RHD2132_16CH_OFFSET*numStreams;
 				}
+				
 				for (int chan = 0; chan < nChans; chan++)
 				{
 					channel++;
 					thisSample[channel] = float(*(uint16*)(bufferPtr + chanIndex) - 32768)*0.195f;
 					chanIndex += 2*numStreams;
-					if (dataStream == 0 && chan == 0) //First channel of the first enabled stream
-						checkThreshold(thisSample[channel]);
+					llBuffer->writeChannelSample(thisSample[channel]);
+					//if (dataStream == 0 && chan == 0) //First channel of the first enabled stream
+					//	checkThreshold(thisSample[channel]);
 				}
+				
 			}
+			
 			index += 64 * numStreams;
 			//now we can do the aux channels
 			auxIndex += 2*numStreams;
@@ -1504,6 +1533,8 @@ bool RHD2000Thread::updateBuffer()
 				index += 16;
 			}
 			eventCode = *(uint16*)(bufferPtr + index);
+			llBuffer->writeEvent(eventCode);
+			llBuffer->stopSampleWrite();
 			index += 4;
 			dataBuffer->addToBuffer(thisSample, &timestamp, &eventCode, 1);
 #if 0
@@ -1642,15 +1673,15 @@ bool RHD2000Thread::updateBuffer()
 
 }
 
-void RHD2000Thread::checkThreshold(float s)
+void RHD2000Thread::setOutputSigs(int sig)
 {
-	bool check = (s > THRESHOLD_CHECK);
-	if (!check != !lastThreshold)
-	{
-		//std::cout << "SIG" << std::endl;
-		lastThreshold = check;
-		evalBoard->setOuputSigs(check ? 0x0001 : 0x0000);
-	}
+	SpinLock::ScopedLockType sl(sLock);
+	evalBoard->setOuputSigs(sig);
+}
+
+uint16 RHD2000Thread::getInputSigs()
+{
+	return evalBoard->getInputSigs();
 }
 
 int RHD2000Thread::getChannelFromHeadstage(int hs, int ch)

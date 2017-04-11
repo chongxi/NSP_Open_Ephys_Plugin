@@ -208,6 +208,7 @@ void rhd2000PCIe::initialize()
 	setCableLengthFeet(PortD, 3.0);
 
 	setDspSettle(false);
+	xike_enable(true);
 
 	setDataSource(0, PortA1);
 	setDataSource(1, PortB1);
@@ -378,7 +379,7 @@ bool rhd2000PCIe::setSampleRate(AmplifierSampleRate newSampleRate)
 
 	// Reprogram clock synthesizer
 	writeRegister(DataFreqPll, D + ((M << 8) & 0x7F00) + (O & 0x00FF));
-
+        
 	// Wait for DataClkLocked = 1 before allowing data acquisition to continue
 	while (isDataClockLocked() == false) {}
 
@@ -611,6 +612,11 @@ void rhd2000PCIe::setMaxTimeStep(unsigned int maxTimeStep)
 void rhd2000PCIe::run()
 {
 	writeRegister(StartTrigger, 0x1);
+}
+
+void rhd2000PCIe::xike_enable(bool eof)
+{
+	writeRegister(XikeEnable, eof);
 }
 
 // Is the FPGA currently running?
@@ -1041,4 +1047,9 @@ bool rhd2000PCIe::readDataBlocks(int numBlocks, queue<Rhd2000DataBlock> &dataQue
 void rhd2000PCIe::setOuputSigs(int sigs)
 {
 	writeRegister(AuxOutputs, sigs);
+}
+
+uint16_t rhd2000PCIe::getInputSigs()
+{
+	readRegister(AuxInputs);
 }

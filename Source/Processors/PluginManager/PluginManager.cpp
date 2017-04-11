@@ -81,35 +81,26 @@ PluginManager::~PluginManager()
 
 void PluginManager::loadAllPlugins()
 {
-    Array<File> paths;
-    
-#ifdef __APPLE__
-    paths.add(File::getSpecialLocation(File::currentApplicationFile).getChildFile("Contents/PlugIns"));
-    paths.add(File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("Application Support/open-ephys/PlugIns"));
-#else
-	paths.add(File::getSpecialLocation(File::currentApplicationFile).getParentDirectory().getChildFile("plugins"));
-#endif
+	Array<File> foundDLLs;
 
-    for (auto &pluginPath : paths) {
-        if (!pluginPath.isDirectory()) {
-            std::cout << "Plugin path not found: " << pluginPath.getFullPathName() << std::endl;
-        } else {
-            loadPlugins(pluginPath);
-        }
-    }
-}
-
-void PluginManager::loadPlugins(const File &pluginPath) {
-    Array<File> foundDLLs;
-    
 #ifdef WIN32
-    String pluginExt("*.dll");
+	File pluginPath = File::getSpecialLocation(File::currentApplicationFile).getParentDirectory().getChildFile("plugins");
+	String pluginExt("*.dll");
 #elif defined(__APPLE__)
+    File pluginPath = File::getSpecialLocation(File::currentApplicationFile).getChildFile("Contents/PlugIns");
     String pluginExt("*.bundle");
 #else
-    String pluginExt("*.so");
+	File pluginPath = File::getSpecialLocation(File::currentApplicationFile).getParentDirectory().getChildFile("plugins");
+	String pluginExt("*.so");
 #endif
-    
+
+
+	if (!pluginPath.isDirectory())
+	{
+		std::cout << "Plugin path not found" << std::endl;
+		return;
+	}
+	
 #ifdef __APPLE__
     pluginPath.findChildFiles(foundDLLs, File::findDirectories, false, pluginExt);
 #else

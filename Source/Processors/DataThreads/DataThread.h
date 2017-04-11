@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include "DataBuffer.h"
 #include "../GenericProcessor/GenericProcessor.h"
+#include "../LowLatency/GenericLLProcessor.h"
 
 class SourceNode;
 
@@ -75,6 +76,13 @@ public:
 
     /** Experimental method used for testing data sources that can deliver outputs.*/
 	virtual void setOutputLow();
+
+	virtual bool isLLCapable();
+
+	//This will go away for the actual creation in another place.
+	virtual GenericLLProcessor* getLLThread();
+
+	void setLLBuffer(LLDataBuffer* buf);
 
     ScopedPointer<DataBuffer> dataBuffer;
 
@@ -142,6 +150,7 @@ protected:
 
     Array<ChannelCustomInfo> channelInfo;
 
+	LLDataBuffer* llBuffer;
 private:
     Time timer;
 

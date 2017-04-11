@@ -81,7 +81,8 @@ namespace PCIeRhythm {
 
 		bool isHeadstageEnabled(int hsNum);
 		int getChannelsInHeadstage(int hsNum);
-
+		
+		void setXikeEnable(bool enable);
 		void setSampleRate(int index, bool temporary = false);
 
 		double setUpperBandwidth(double upper); // set desired BW, returns actual BW
@@ -104,6 +105,11 @@ namespace PCIeRhythm {
 
 		bool isAcquisitionActive();
 		bool isReady();
+
+
+		bool startAcquisition();
+		bool stopAcquisition();
+
 
 		int modifyChannelGain(int channel, float gain);
 		int modifyChannelName(int channel, String newName);
@@ -131,7 +137,15 @@ namespace PCIeRhythm {
 
 		static DataThread* createDataThread(SourceNode* sn);
 
+		void setOutputSigs(int sigs);
+		uint16 getInputSigs();
+
+		bool isLLCapable() override;
+		GenericLLProcessor* getLLThread() override;
+
+
 	private:
+		SpinLock sLock;
 
 		bool enableHeadstage(int hsNum, bool enabled, int nStr = 1, int strChans = 32);
 		void updateBoardStreams();
@@ -177,9 +191,6 @@ namespace PCIeRhythm {
 
 		void timerCallback();
 
-		bool startAcquisition();
-		bool stopAcquisition();
-
 		bool openBoard();
 		void initializeBoard();
 
@@ -206,10 +217,6 @@ namespace PCIeRhythm {
 		bool newScan;
 		ScopedPointer<RHDImpedanceMeasure> impedanceThread;
 		bool ledsEnabled;
-
-		bool lastThreshold;
-
-		void checkThreshold(float s);
 
 		int auxSamp;
 

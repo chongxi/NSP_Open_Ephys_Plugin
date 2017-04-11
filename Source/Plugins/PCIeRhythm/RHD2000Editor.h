@@ -200,7 +200,7 @@ namespace PCIeRhythm {
 		ScopedPointer<AudioInterface> audioInterface;
 		ScopedPointer<ClockDivideInterface> clockInterface;
 
-		ScopedPointer<UtilityButton> rescanButton, dacTTLButton;
+		ScopedPointer<UtilityButton> rescanButton, fifoBtn;
 		ScopedPointer<UtilityButton> adcButton;
 		ScopedPointer<UtilityButton> ledButton;
 

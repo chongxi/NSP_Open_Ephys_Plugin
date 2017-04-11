@@ -63,7 +63,6 @@ public:
 	PluginManager();
 	~PluginManager();
 	void loadAllPlugins();
-    void loadPlugins(const File &pluginPath);
 	int loadPlugin(const String&);
 	//void unloadPlugin(Plugin *);
 	void removeAllPlugins();
