@@ -854,7 +854,6 @@ void RHD2000Editor::buttonEvent(Button* button)
     {
 	printf("RAM FIFO State: %d\n", fifoBtn->getToggleState()); 
 	if(fifoBtn->getToggleState()){
-	    // Popen({"ls -l"});
 	    board->stopAcquisition();
 	    board->setXikeEnable(fifoBtn->getToggleState());
 	    Popen({"fifo", "5120000"}, input{"/dev/xillybus_mua_32"}, output{"./pcie.bin"});
