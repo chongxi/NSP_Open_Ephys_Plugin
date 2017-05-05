@@ -690,7 +690,7 @@ RHD2000Editor::RHD2000Editor(GenericProcessor* parentNode,
     ttlSettleCombo->setSelectedId(1, sendNotification);
     // addAndMakeVisible(ttlSettleCombo);
 
-    fifoBtn = new UtilityButton("RAM FIFO", Font("Small Text", 14, Font::plain));
+    fifoBtn = new UtilityButton("MUA FIFO", Font("Small Text", 14, Font::plain));
     fifoBtn->setRadius(3.0f);
     fifoBtn->setBounds(260,25,65,50);
     fifoBtn->addListener(this);
@@ -856,7 +856,8 @@ void RHD2000Editor::buttonEvent(Button* button)
 	if(fifoBtn->getToggleState()){
 	    board->stopAcquisition();
 	    board->setXikeEnable(fifoBtn->getToggleState());
-	    Popen({"fifo", "5120000"}, input{"/dev/xillybus_mua_32"}, output{"./pcie.bin"});
+	    Popen({"fifo", "5120000"}, input{"/dev/xillybus_mua_32"}, output{"./mua.bin"});
+	    Popen({"fifo", "5120000"}, input{"/dev/xillybus_spk_sort_32"}, output{"./spk.bin"});
 	    board->startAcquisition();
 	}
 	else{
