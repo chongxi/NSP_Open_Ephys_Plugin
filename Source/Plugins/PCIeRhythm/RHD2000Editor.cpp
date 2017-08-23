@@ -858,6 +858,7 @@ void RHD2000Editor::buttonEvent(Button* button)
 	    board->setXikeEnable(fifoBtn->getToggleState());
 	    Popen({"fifo", "5120000"}, input{"/dev/xillybus_mua_32"}, output{"./mua.bin"});
 	    Popen({"fifo", "5120000"}, input{"/dev/xillybus_spk_sort_32"}, output{"./spk.bin"});
+	    Popen({"fifo", "5120000"}, input{"/dev/xillybus_spk_realtime_32"}, output{"./spk_wav.bin"});
 	    board->startAcquisition();
 	}
 	else{
