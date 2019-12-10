@@ -1,3 +1,7 @@
+Check out the `binaryWriter` for the PCIe recording. 
+
+
+
 ==================================
 Welcome to the Open Ephys project!
 ==================================
