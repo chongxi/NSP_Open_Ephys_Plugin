@@ -1,6 +1,6 @@
 # A open ephys plugin for low-latency neural signal processor (NSP)
-paper: https://www.biorxiv.org/content/10.1101/2023.09.14.557854v1.full.pdf
-branch: check out the `binaryWriter` for the PCIe recording. 
+- paper: https://www.biorxiv.org/content/10.1101/2023.09.14.557854v1.full.pdf
+- branch: check out the `binaryWriter` for the PCIe recording. 
 
 
 
