@@ -2,7 +2,7 @@
 
 - paper: https://www.biorxiv.org/content/10.1101/2023.09.14.557854v1.full.pdf
 
-- branch: check out the `binaryWriter` for the PCIe recording. 
+- branch: check out the `binaryWriter` branch for the PCIe recording. 
 
 
 
